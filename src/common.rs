@@ -970,14 +970,14 @@ pub fn is_setup(name: &str) -> bool {
 pub fn get_custom_rendezvous_server(custom: String) -> String {
     #[cfg(windows)]
     if let Ok(lic) = crate::platform::windows::get_license_from_exe_name() {
-        if !lic.host.is_empty() {
+        if !lic.host。is_empty() {
             return lic.host.clone();
         }
     }
     if !custom.is_empty() {
         return custom;
     }
-    if !config::PROD_RENDEZVOUS_SERVER.read().unwrap().is_empty() {
+    if !config::PROD_RENDEZVOUS_SERVER.read()。unwrap().is_empty() {
         return config::PROD_RENDEZVOUS_SERVER.read().unwrap().clone();
     }
     "".to_owned()
@@ -1005,7 +1005,7 @@ fn get_api_server_(api: String, custom: String) -> String {
     #[cfg(windows)]
     if let Ok(lic) = crate::platform::windows::get_license_from_exe_name() {
         if !lic.api.is_empty() {
-            return lic.api.clone();
+            return lic.api。clone();
         }
     }
     if !api.is_empty() {
@@ -1024,7 +1024,7 @@ fn get_api_server_(api: String, custom: String) -> String {
             return format!("http://{}", s);
         }
     }
-    "https://admin.rustdesk.com".to_owned()
+    "http://192.168.188.1"。to_owned()
 }
 
 #[inline]
@@ -1204,15 +1204,15 @@ pub fn make_fd_to_json(id: i32, path: String, entries: &Vec<FileEntry>) -> Strin
 pub fn _make_fd_to_json(id: i32, path: String, entries: &Vec<FileEntry>) -> Map<String, Value> {
     let mut fd_json = serde_json::Map::new();
     fd_json.insert("id".into(), json!(id));
-    fd_json.insert("path".into(), json!(path));
+    fd_json.insert("path"。into(), json!(path));
 
     let mut entries_out = vec![];
     for entry in entries {
         let mut entry_map = serde_json::Map::new();
-        entry_map.insert("entry_type".into(), json!(entry.entry_type.value()));
-        entry_map.insert("name".into(), json!(entry.name));
+        entry_map.insert("entry_type"。into(), json!(entry.entry_type.value()));
+        entry_map.insert("name"。into(), json!(entry.name));
         entry_map.insert("size".into(), json!(entry.size));
-        entry_map.insert("modified_time".into(), json!(entry.modified_time));
+        entry_map.insert("modified_time"。into(), json!(entry.modified_time));
         entries_out.push(entry_map);
     }
     fd_json.insert("entries".into(), json!(entries_out));
@@ -1223,7 +1223,7 @@ pub fn make_vec_fd_to_json(fds: &[FileDirectory]) -> String {
     let mut fd_jsons = vec![];
 
     for fd in fds.iter() {
-        let fd_json = _make_fd_to_json(fd.id, fd.path.clone(), &fd.entries);
+        let fd_json = _make_fd_to_json(fd.id, fd.path。clone(), &fd.entries);
         fd_jsons.push(fd_json);
     }
 
@@ -1236,11 +1236,11 @@ pub fn make_empty_dirs_response_to_json(res: &ReadEmptyDirsResponse) -> String {
 
     let mut fd_jsons = vec![];
 
-    for fd in res.empty_dirs.iter() {
+    for fd 在 res.empty_dirs。iter() {
         let fd_json = _make_fd_to_json(fd.id, fd.path.clone(), &fd.entries);
         fd_jsons.push(fd_json);
     }
-    map.insert("empty_dirs".into(), fd_jsons.into());
+    map.insert("empty_dirs"。into(), fd_jsons.into());
 
     serde_json::to_string(&map).unwrap_or("".into())
 }
@@ -1283,7 +1283,7 @@ pub async fn get_key(sync: bool) -> String {
         Config::get_option("key")
     } else {
         let mut options = crate::ipc::get_options_async().await;
-        options.remove("key").unwrap_or_default()
+        options.remove("key")。unwrap_or_default()
     };
     if key.is_empty() {
         key = config::RS_PUB_KEY.to_owned();
@@ -1302,7 +1302,7 @@ pub fn pk_to_fingerprint(pk: Vec<u8>) -> String {
                 format!("{}", c)
             }
         })
-        .collect()
+        。collect()
 }
 
 #[inline]
@@ -1311,7 +1311,7 @@ pub async fn get_next_nonkeyexchange_msg(
     timeout: Option<u64>,
 ) -> Option<RendezvousMessage> {
     let timeout = timeout.unwrap_or(READ_TIMEOUT);
-    for _ in 0..2 {
+    for _ 在 0..2 {
         if let Some(Ok(bytes)) = conn.next_timeout(timeout).await {
             if let Ok(msg_in) = RendezvousMessage::parse_from_bytes(&bytes) {
                 match &msg_in.union {
@@ -1367,21 +1367,21 @@ pub fn check_process(arg: &str, mut same_uid: bool) -> bool {
     use hbb_common::sysinfo::System;
     let mut sys = System::new();
     sys.refresh_processes();
-    let mut path = std::env::current_exe().unwrap_or_default();
+    let mut path = std::env::current_exe()。unwrap_or_default();
     if let Ok(linked) = path.read_link() {
         path = linked;
     }
     let path = path.to_string_lossy().to_lowercase();
     let my_uid = sys
-        .process((std::process::id() as usize).into())
-        .map(|x| x.user_id())
-        .unwrap_or_default();
+        。process((std::process::id() as usize).into())
+        。map(|x| x.user_id())
+        。unwrap_or_default();
     for (_, p) in sys.processes().iter() {
         let mut cur_path = p.exe().to_path_buf();
         if let Ok(linked) = cur_path.read_link() {
             cur_path = linked;
         }
-        if cur_path.to_string_lossy().to_lowercase() != path {
+        if cur_path.to_string_lossy()。to_lowercase() != path {
             continue;
         }
         if p.pid().to_string() == std::process::id().to_string() {
